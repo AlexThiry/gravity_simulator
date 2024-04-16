@@ -16,8 +16,8 @@ class Body():
 
         pos1 = self.position
         pos2 = body.position
-        deltaY = abs(pos2[1] - pos1[1])
-        deltaX = abs(pos2[0] - pos1[0])
+        deltaX = pos2[0] - pos1[0]
+        deltaY = pos2[1] - pos1[1]
 
         d = sqrt(deltaX**2 + deltaY**2)
 
@@ -26,7 +26,7 @@ class Body():
         fy = f * sin(atan2(deltaY, deltaX))
         return (fx, fy)
     
-    def updatePos(self, bodies):
+    def updatePos(self, bodies, dt):
         total_fx, total_fy = 0, 0
         for body in bodies:
             if self != body:
@@ -34,14 +34,14 @@ class Body():
                 total_fx += currentForce[0]
                 total_fy += currentForce[1]
         
-        self.velocity[0] += total_fx/self.mass * 3600 * 24
-        self.velocity[1] += total_fy/self.mass * 3600 * 24
+        self.velocity[0] += total_fx/self.mass * dt
+        self.velocity[1] += total_fy/self.mass * dt
         
-        self.position[0] += self.velocity[0] * 3600 * 24
-        self.position[1] += self.velocity[1] * 3600 * 24
+        self.position[0] += self.velocity[0] * dt
+        self.position[1] += self.velocity[1] * dt
     
     def draw(self, window):
-        SCALE = 1/10e8 #1px = 1,000,000,000 m
-        window_x = self.position[0] * SCALE + 300
-        window_y = self.position[1] * SCALE + 300
+        SCALE = 400/208e9 # 1/10e8 #1px = 1,000,000,000 m
+        window_x = self.position[0] * SCALE + 700
+        window_y = self.position[1] * SCALE + 375
         pygame.draw.circle(window, self.color, (window_x, window_y), self.radius)
