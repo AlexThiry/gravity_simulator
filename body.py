@@ -7,5 +7,7 @@ class Body():
         self.velocity = velocity
         self.radius = radius
         self.color = color
+    def updatePos(self):
+        self.position += self.velocity
     def draw(self, d):
         pygame.draw.circle(d, self.color, self.position, self.radius)
