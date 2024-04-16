@@ -1,6 +1,5 @@
 import pygame
 from body import Body
-from functions import *
 
 #Initialize PyGame window
 
@@ -13,29 +12,28 @@ clock = pygame.time.Clock()
 
 #Initialize bodies
 
-sun = Body(1.989e30, [300,300], [0,0], 50, (255,255,0))
+sun = Body(1.989e30, [0,0], [0,0], 50, (255,255,0))
 sun.center = True
 
-earth = Body(5.98e24, [0,150], [1,0], 25, (0,0,255))
+earth = Body(5.98e24, [-1.496e11,0], [0, 29784.8], 25, (0,0,255)) #In meters
+mars = Body(6.39e23, [208.41e9,0], [0, -24.077 * 1000], 20, (255,0,0))
+mercury = Body(3.3e23, [65.478e9,0], [0, -47.4 * 1000], 10,(120,120,120))
+venus = Body(4.8685e24, [-108.74e9, 0], [0, 35.02 * 1000], 15, (255,255,255))
 
-bodiesToSimulate = [sun, earth]
+bodiesToSimulate = [sun, earth, mars, mercury, venus]
 
 #Game function
 
 def main():
     running = True
     while running:
-        clock.tick(30)
+        clock.tick(60)
         window.fill((0,0,0))
-        sun.draw(window)
-        earth.draw(window)
 
-        f = getForceOfAttraction(sun.mass, earth.mass, getDistanceBetweenTwoBodies(sun.position, earth.position))
-        sf = splitForceVector(f, sun.position, earth.position)
-        earth.velocity = updateVelocity(earth.velocity, earth.mass, sf)
+        for body in bodiesToSimulate:
+            body.updatePos(bodiesToSimulate)
+            body.draw(window)
 
-
-        earth.updatePos()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False

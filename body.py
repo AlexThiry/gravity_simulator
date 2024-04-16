@@ -10,25 +10,38 @@ class Body():
         self.color = color
         
         self.center = False
+    
     def getForceOfGravity(self, body):
         GRAVITATIONAL_CONSTANT = 6.6743e-11
 
         pos1 = self.position
         pos2 = body.position
-        deltaY = pos1[1] - pos2[1]
-        deltaX = pos1[0] - pos2[0]
+        deltaY = abs(pos2[1] - pos1[1])
+        deltaX = abs(pos2[0] - pos1[0])
 
-        d = sqrt(deltaX**2 + deltaY**2) * 10e6 #1px = 1 million km
+        d = sqrt(deltaX**2 + deltaY**2)
 
-        f = (GRAVITATIONAL_CONSTANT * set.mass * body.mass)/d**2
-        fx = f * cos(atan2(deltaY/deltaX))
-        fy = f * sin(atan2(deltaY/deltaX))
+        f = (GRAVITATIONAL_CONSTANT * self.mass * body.mass)/d**2
+        fx = f * cos(atan2(deltaY, deltaX))
+        fy = f * sin(atan2(deltaY, deltaX))
         return (fx, fy)
+    
     def updatePos(self, bodies):
-        total_fx, total_fy = 0
+        total_fx, total_fy = 0, 0
         for body in bodies:
-            if body != self:
+            if self != body:
                 currentForce = self.getForceOfGravity(body)
-                total_fx, total_fy += currentForce[0], currentForce[1]
-    def draw(self, d):
-        pygame.draw.circle(d, self.color, tuple(self.position), self.radius)
+                total_fx += currentForce[0]
+                total_fy += currentForce[1]
+        
+        self.velocity[0] += total_fx/self.mass * 3600 * 24
+        self.velocity[1] += total_fy/self.mass * 3600 * 24
+        
+        self.position[0] += self.velocity[0] * 3600 * 24
+        self.position[1] += self.velocity[1] * 3600 * 24
+    
+    def draw(self, window):
+        SCALE = 1/10e8 #1px = 1,000,000,000 m
+        window_x = self.position[0] * SCALE + 300
+        window_y = self.position[1] * SCALE + 300
+        pygame.draw.circle(window, self.color, (window_x, window_y), self.radius)
